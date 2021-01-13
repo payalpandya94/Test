@@ -19,8 +19,18 @@ public class ShowDetailsOnObjectSelectionContTest {
     public Static void checkDefaultFieldsRecordMethod(){
         String selectedObject = 'Account';
         List<String> selectedFields = new List<String>();
-        selectedFields.add('Id');
-        selectedFields.add('Name');
+        
+        Map<String, Schema.SObjectType> schemaMap = Schema.getGlobalDescribe();
+            Schema.SObjectType objectSchema = schemaMap.get(selectedObject);
+            Map<String, Schema.SObjectField> fieldMap = objectSchema.getDescribe().fields.getMap();
+            
+            Map<String,string> relatedFields = new  Map<String,string> ();
+            
+            for (String fieldName: fieldMap.keySet()) {
+                
+                System.debug('##Field API Name='+fieldName);// list of all field API name
+                selectedFields.add(fieldMap.get(fieldName).getDescribe().getLabel());//It provides to get the object fields label.
+            }
         
         Account acc = new Account(name='Test Account');
         insert acc;
