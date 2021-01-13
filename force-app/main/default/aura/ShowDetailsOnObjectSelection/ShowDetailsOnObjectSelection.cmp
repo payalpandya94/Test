@@ -1,0 +1,80 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes" access="global"  controller="ShowDetailsOnObjectSelectionController">
+    
+    <!-- Attributes -->
+    <aura:attribute name="listOfObjects" type="List"/>
+    <aura:attribute name="listOfFields" type="List"/>
+    <aura:attribute name="objFieldRecords" type="List"/>
+    <aura:attribute name="PageHeading" type="String" default="Schema Class In Lightning to Query all Objects"/>
+    <aura:attribute name="selectedValue" type="String" />
+    <aura:attribute name="selectedFieldValues" type="String" />
+    <aura:attribute name="showSelectedObjFields" type="boolean" default = 'false'/>
+    <aura:attribute name="showDataOfSelectedFields" type="boolean" default = 'false'/>
+    
+    <!-- handlers-->
+    <aura:handler name="init" value="{!this}" action="{!c.doinit}"/>
+    
+    <lightning:select name="objectSelect" label="Select a Object:" aura:id="objectSelect" value="{!v.selectedValue}">
+        <aura:iteration items="{!v.listOfObjects}" var="item">
+            <option text="{!item}" value="{!item}" selected="{!item.selected}"/>
+        </aura:iteration>
+    </lightning:select>
+    
+    <br></br>
+    
+    <lightning:button variant="brand" label="Select" title="Select" onclick="{! c.handleClick }"/>
+    
+    <br></br>
+    
+    <!-- Showing list of related fields for selected object and its type -->
+    <aura:if isTrue="{!v.showSelectedObjFields}">
+        <div class="slds">
+            <table  class="slds-table slds-table_bordered slds-table_cell-buffer">
+                <thead>
+                    <tr class="slds-text-title_caps">
+                        <th scope="col"> Attribute Name </th>
+                        <th scope="col"> Type </th>
+                        <th scope="col"> Select </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <aura:iteration items="{!v.listOfFields}" var="field">
+                        <tr>
+                            <th>
+                                {!field.key}
+                            </th>
+                            <th>
+                                {!field.value}
+                            </th>
+                            <th>
+                                <label class="slds-checkbox">
+                                    <ui:inputCheckbox  aura:id="checkFields" text="{!field.key}"
+                                                      change="{!c.checkboxSelect}"/>
+                                    <span class="slds-checkbox_faux"></span>
+                                    <span class="slds-form-element__label text"></span>
+                                </label>
+                            </th>
+                        </tr>
+                    </aura:iteration>
+                </tbody>
+            </table>
+        </div>
+        
+        <br></br>
+        
+        <!-- after clicking on this button it will show record data for selected fields in above table -->
+        <lightning:button variant="brand" label="Next" title="Next" onclick="{! c.showRecords }"/>
+        
+        <br></br>
+        
+        <aura:if isTrue="{!v.showDataOfSelectedFields}">
+            
+            <!-- division that will show the dynamic content --> 
+            <div class="slds-scrollable_x"> 
+                <table class="slds-table slds-table--bordered slds-max-medium-table--stacked-horizontal slds-table_col-bordered">
+                    <tbody id='sfdctable' />
+                </table>
+            </div>    
+        </aura:if>
+        
+    </aura:if>
+</aura:component>
